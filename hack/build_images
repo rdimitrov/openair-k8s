@@ -12,6 +12,10 @@ else
   DOCKERFILE_SUFIX=${PLATFORM}
 fi
 
+if hash podman 2>/dev/null; then
+    USE_PODMAN=true
+fi
+
 KERNEL_VERSION=${KERNEL_VERSION:-$(uname -r)}
 KERNEL_VERSION=${KERNEL_VERSION%*.x86_64}
 REGISTRY=${REGISTRY:-registry.redhat.io}
@@ -138,9 +142,9 @@ for i in $IMAGES; do
         fi
     fi
     # decide whether or not to use docker or podman
-    if [[ -z $USE_DOCKER ]]; then
-        build_image_podman $IMG $TAG
-    else
+    if [[ -z $USE_PODMAN ]]; then
         build_image_docker $IMG $TAG
+    else
+        build_image_podman $IMG $TAG
     fi
 done
